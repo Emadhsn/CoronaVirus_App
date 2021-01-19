@@ -7,7 +7,7 @@ import {colors} from '../theme';
 
 const Button = memo(({children, style, titleStyle, colors, title, ...rest}) => {
   return (
-    <TouchableOpacity {...rest} style={{...styles.shadowBox}}>
+    <TouchableOpacity {...rest} style={{...styles.shadowBox, ...style}}>
       <LinearGradient
         style={{...styles.body, ...style}}
         colors={colors || ['#FF9A00', '#FF9A00', '#FF7A00']}

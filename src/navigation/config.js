@@ -1,6 +1,7 @@
 import React from 'react';
-import {StyleSheet, Appearance} from 'react-native';
-import {createStackNavigator} from '@react-navigation/stack';
+import {StyleSheet, Appearance, Image, Platform} from 'react-native';
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
+
 import {
   NavigationContainer,
   DarkTheme,
@@ -13,13 +14,77 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 //screens
 import {Dashboard} from '../features/dashboard';
 import {Countries, CountryDetails} from '../features/countries';
+import {Deposit, Account, Profile} from '../features/snippet';
+
+import {TabBar} from './TabBar';
+import CloseIcon from '../assets/icons/close.png';
+
+export const AccountMatTab = () => {
+  const MatTab = createMaterialTopTabNavigator();
+
+  return (
+    <MatTab.Navigator
+      initialRouteName="Profile"
+      tabBarOptions={{...navigatorStyle.matTansTabBar}}>
+      <MatTab.Screen name="Profile" component={Profile} />
+      <MatTab.Screen name="documentes" component={Deposit} />
+    </MatTab.Navigator>
+  );
+};
 
 const HomeNavigation = () => {
   const themeState = Appearance.getColorScheme();
-
-  const HomeStack = createStackNavigator();
   const HomeTab = createBottomTabNavigator();
-  const HomeMatTab = createMaterialTopTabNavigator();
+
+  const DepositMatTab = () => {
+    const DepositMatTab = createMaterialTopTabNavigator();
+
+    return (
+      <DepositMatTab.Navigator
+        initialRouteName="Deposit"
+        tabBarOptions={{...navigatorStyle.matTabBar}}
+        style={{...navigatorStyle.matBody}}>
+        <DepositMatTab.Screen name="Funds" component={Deposit} />
+        <DepositMatTab.Screen name="Crypto" component={Deposit} />
+      </DepositMatTab.Navigator>
+    );
+  };
+
+  const DepositStack = () => {
+    const HomeStack = createStackNavigator();
+
+    return (
+      <HomeStack.Navigator
+        initialRouteName="Deposit"
+        mode="modal"
+        screenOptions={{
+          ...navigatorStyle.header,
+          ...TransitionPresets.ModalSlideFromBottomIOS,
+        }}>
+        <HomeStack.Screen name="Deposit" component={DepositMatTab} />
+        <HomeStack.Screen
+          name="Account"
+          options={{...navigatorStyle.modalheader}}
+          component={Account}
+        />
+      </HomeStack.Navigator>
+    );
+  };
+
+  return (
+    <NavigationContainer>
+      <HomeTab.Navigator
+        initialRouteName="Deposit"
+        tabBar={(props) => <TabBar {...props} />}>
+        <HomeTab.Screen name="Portfolio" component={Account} />
+        <HomeTab.Screen name="Deposit" component={DepositStack} />
+        <HomeTab.Screen name="Withdraw" component={Account} />
+        <HomeTab.Screen name="Trade" component={Account} />
+        <HomeTab.Screen name="History" component={Account} />
+      </HomeTab.Navigator>
+    </NavigationContainer>
+  );
+
   const Root = () => {
     return (
       <HomeStack.Navigator initialRouteName="Countries">
@@ -32,7 +97,6 @@ const HomeNavigation = () => {
       </HomeStack.Navigator>
     );
   };
-
   return (
     <SafeAreaView style={{...styles.body}}>
       <NavigationContainer
@@ -53,6 +117,57 @@ const HomeNavigation = () => {
     </SafeAreaView>
   );
 };
-
+export const navigatorStyle = {
+  modalheader: {
+    headerBackImage: () => (
+      <Image
+        source={CloseIcon}
+        style={{width: 14, height: 14, margin: 15, tintColor: '#fff'}}
+      />
+    ),
+    headerTitleAlign: 'left',
+    headerBackTitleVisible: false,
+  },
+  header: {
+    headerStyle: {
+      backgroundColor: '#081E39',
+      borderWidth: 0,
+      elevation: 0,
+      height: Platform.OS === 'android' ? 65 : 100,
+    },
+    headerTitleStyle: {color: '#fff'},
+  },
+  matBody: {backgroundColor: '#081E39'},
+  matTabBar: {
+    style: {
+      backgroundColor: '#081E39',
+      borderWidth: 0,
+      elevation: 0,
+      width: '90%',
+      marginHorizontal: '5%',
+    },
+    indicatorStyle: {
+      backgroundColor: 'orange',
+      height: 4,
+      bottom: -4,
+    },
+    labelStyle: {fontWeight: 'bold', color: '#fff'},
+  },
+  matTansTabBar: {
+    style: {
+      backgroundColor: 'transparent',
+      borderWidth: 0,
+      elevation: 0,
+      width: '90%',
+      marginHorizontal: '5%',
+    },
+    indicatorStyle: {
+      backgroundColor: '#081E39',
+      height: 4,
+      bottom: -4,
+    },
+    labelStyle: {fontWeight: 'bold', color: '#081E39'},
+  },
+};
 const styles = StyleSheet.create({body: {flex: 1}});
 export {HomeNavigation};

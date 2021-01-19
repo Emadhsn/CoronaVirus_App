@@ -1,9 +1,9 @@
 import React from 'react';
 
-import {HomeNavigation} from './config';
+import {HomeNavigation, AccountMatTab} from './config';
 
 const RootNavigation = () => {
   return <HomeNavigation />;
 };
 
-export {RootNavigation};
+export {RootNavigation, AccountMatTab};
